@@ -1,0 +1,4 @@
+ABRACADABRA
+
+A arvore de Huffman e uma arvore binaria construida a partir das frequencias
+dos simbolos. Os simbolos mais frequentes recebem codigos mais curtos.

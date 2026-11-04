@@ -1,0 +1,61 @@
+A TEORIA DOS GRAFOS E A COMPRESSAO DE DADOS
+
+A teoria dos grafos estuda estruturas formadas por vertices e arestas. Uma
+arvore e um caso particular de grafo conexo e aciclico. Quando cada no possui
+no maximo dois filhos, temos uma arvore binaria. O algoritmo de Huffman usa
+exatamente essa estrutura: as folhas representam simbolos e os nos internos
+representam a soma dos pesos dos filhos.
+
+O algoritmo guloso de Huffman escolhe sempre os dois nos de menor frequencia
+para formar um novo no interno. Esse processo se repete ate que reste apenas um
+no, que sera a raiz da arvore. Em seguida, cada caminho da raiz ate uma folha
+define um codigo binario. A aresta esquerda vale zero e a aresta direita vale
+um. Como nenhum codigo e prefixo de outro, a decodificacao e inequivoca.
+
+A compactacao de arquivos e uma aplicacao pratica importante. Textos em
+portugues possuem letras como A, E, O e S com alta frequencia, enquanto letras
+como X, Z e K aparecem pouco. Huffman explora essa diferenca atribuindo codigos
+curtos aos simbolos frequentes e codigos longos aos raros. O resultado e uma
+reducao significativa no numero de bits necessarios para representar o mesmo
+conteudo.
+
+O algoritmo LZ77 adota uma ideia diferente. Ele mantem uma janela deslizante
+sobre os dados ja processados e procura a maior sequencia que coincide com o
+trecho atual. Quando encontra uma repeticao suficientemente longa, emite uma
+referencia formada por distancia e comprimento. Caso contrario, emite o byte
+literal. Dessa forma, LZ77 explora a redundancia de sequencias repetidas, que e
+especialmente comum em textos com listas, tabelas, codigos-fonte e documentos
+com estruturas repetitivas.
+
+A combinacao LZ77 mais Huffman une as duas ideias. Primeiro, LZ77 transforma os
+dados em uma sequencia de tokens. Depois, essa sequencia e serializada em bytes
+e comprimida por Huffman. Assim, o programa explora tanto a repeticao de
+sequencias quanto a distribuicao desigual de frequencias. Nem sempre a
+combinacao vence: em arquivos pequenos ou com poucas repeticoes, o custo extra
+dos metadados pode tornar o resultado maior do que o Huffman puro. Por isso a
+estrategia automatica compara os tamanhos completos dos arquivos gerados.
+
+O formato .huff armazena a assinatura, a versao, a estrategia escolhida, o nome
+original, o tamanho original, as frequencias, a quantidade exata de bits, o
+hash SHA-256 e os dados empacotados. A arvore nao precisa ser gravada porque
+pode ser reconstruida a partir das frequencias usando o mesmo criterio de
+desempate. Esse detalhe reduz o tamanho do cabecalho e garante que a
+descompactacao seja independente do arquivo original.
+
+A verificacao de integridade e feita com SHA-256. Depois de reconstruir os
+bytes, o programa calcula o hash e compara com o valor armazenado. Se os valores
+forem diferentes, a descompactacao e considerada invalida e o usuario recebe
+uma mensagem de erro. Essa etapa protege contra arquivos corrompidos, truncados
+ou modificados acidentalmente.
+
+Em resumo, o projeto demonstra como conceitos de grafos, filas de prioridade,
+codificacao de tamanho variavel e janelas deslizantes podem ser aplicados na
+construcao de um compactador funcional. A interface permite visualizar a arvore
+de Huffman, comparar estrategias e acompanhar a taxa de compactacao, facilitando
+a apresentacao academica dos resultados.
+
+Este arquivo contem varios paragrafos e uma quantidade razoavel de simbolos
+distintos. Ele serve para avaliar o comportamento das duas estrategias em um
+texto tipico, com repeticoes naturais da lingua portuguesa e vocabulario
+variado. A estrategia automatica deve escolher aquela que produzir o menor
+arquivo completo.
