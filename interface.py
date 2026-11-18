@@ -13,6 +13,7 @@ import sys
 import threading
 from pathlib import Path
 from tkinter import filedialog, messagebox
+from typing import Optional
 
 import customtkinter as ctk
 
@@ -563,12 +564,11 @@ class App(ctk.CTk):
             )
             return False
 
-        try:
-            data.decode("utf-8")
-        except UnicodeDecodeError:
+        encoding = self._detect_encoding(data)
+        if encoding is None:
             messagebox.showerror(
                 "Codificação incompatível",
-                "O arquivo selecionado não é um texto UTF-8 válido.",
+                "O arquivo selecionado não é um texto válido.",
                 parent=self,
             )
             return False
@@ -582,7 +582,7 @@ class App(ctk.CTk):
         self.info_path.configure(text=str(path))
         self.info_size.configure(text=size_line(len(data)))
         self.info_details.configure(
-            text=f"Texto UTF-8 válido • {format_int(len(data))} bytes"
+            text=f"Texto {encoding} válido • {format_int(len(data))} bytes"
         )
 
         self._set_status("Arquivo pronto para compactação.", "success")
@@ -593,6 +593,27 @@ class App(ctk.CTk):
         )
         self._update_buttons()
         return True
+
+    @staticmethod
+    def _detect_encoding(data: bytes) -> Optional[str]:
+        if data.startswith(b"\xef\xbb\xbf"):
+            try:
+                data.decode("utf-8-sig")
+                return "UTF-8"
+            except UnicodeDecodeError:
+                return None
+        try:
+            data.decode("utf-8")
+            return "UTF-8"
+        except UnicodeDecodeError:
+            pass
+        for encoding in ("cp1252", "latin-1"):
+            try:
+                data.decode(encoding)
+                return encoding.upper()
+            except UnicodeDecodeError:
+                continue
+        return None
 
     def _load_huff(self, path: Path) -> bool:
         try:

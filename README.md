@@ -372,9 +372,10 @@ bytes da representação intermediária produzida pelo LZ77.
 - arquivo com um único símbolo;
 - arquivo com muitos caracteres repetidos;
 - caracteres acentuados e UTF-8;
+- textos em Windows-1252/Latin-1 (detecção automática com aviso do encoding);
 - espaços, quebras de linha e tabulações;
 - arquivos muito pequenos e arquivos grandes;
-- extensão inválida ou codificação incompatível com UTF-8;
+- extensão inválida ou conteúdo que não é texto reconhecível;
 - falha ao ler ou salvar;
 - confirmação antes de sobrescrever;
 - árvore com muitos nós;
